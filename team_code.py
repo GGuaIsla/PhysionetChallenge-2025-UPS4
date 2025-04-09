@@ -97,7 +97,7 @@ def train_model(data_folder, model_folder, verbose):
     reduce_lr_epochs = 20
     
     # (6) Training parameters (per subset)
-    num_epochs = 150 
+    num_epochs = 100 
 
     # --------------------------------------------------------------------------
     # 0. Get the job id
@@ -528,11 +528,18 @@ def create_test_set(ecg_ids_abs, labels, test_size=0.2):
     
     # exclude any signal in the database: PTB-XL
     # if the database is PTB-XL, exclude it from the test set
-    #if 'PTB-XL' in database_id:
-    #    ptb_xl_indices = np.where(database_id == 'PTB-XL')[0]
-    #    database_id = np.delete(database_id, ptb_xl_indices)
-    #    labels = np.delete(labels, ptb_xl_indices)
-    #    ecg_ids_abs = np.delete(ecg_ids_abs, ptb_xl_indices)
+    if 'PTB-XL' in database_id and 'SamiTrop' in database_id:
+        ptb_xl_indices = np.where(database_id == 'PTB-XL')[0]
+        samitrop_indices = np.where(database_id == 'SamiTrop')[0]
+
+        # Limit the number of PTB-XL signals to match the number of SamiTrop signals
+        num_samitrop_signals = len(samitrop_indices)
+        ptb_xl_indices = ptb_xl_indices[:num_samitrop_signals]
+
+        # Remove excess PTB-XL signals
+        database_id = np.delete(database_id, ptb_xl_indices[num_samitrop_signals:])
+        labels = np.delete(labels, ptb_xl_indices[num_samitrop_signals:])
+        ecg_ids_abs = np.delete(ecg_ids_abs, ptb_xl_indices[num_samitrop_signals:])
 
     if test_size == 0:
         return [], [], ecg_ids_abs, labels
@@ -1036,7 +1043,7 @@ class DLmodel:
 
         callback = tf.keras.callbacks.EarlyStopping(
             monitor="val_loss", min_delta=0.0001,
-            patience=10,
+            patience=20,
             verbose=0,
             mode="auto", 
             baseline=None,
