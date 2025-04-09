@@ -528,11 +528,11 @@ def create_test_set(ecg_ids_abs, labels, test_size=0.2):
     
     # exclude any signal in the database: PTB-XL
     # if the database is PTB-XL, exclude it from the test set
-    if 'PTB-XL' in database_id:
-        ptb_xl_indices = np.where(database_id == 'PTB-XL')[0]
-        database_id = np.delete(database_id, ptb_xl_indices)
-        labels = np.delete(labels, ptb_xl_indices)
-        ecg_ids_abs = np.delete(ecg_ids_abs, ptb_xl_indices)
+    #if 'PTB-XL' in database_id:
+    #    ptb_xl_indices = np.where(database_id == 'PTB-XL')[0]
+    #    database_id = np.delete(database_id, ptb_xl_indices)
+    #    labels = np.delete(labels, ptb_xl_indices)
+    #    ecg_ids_abs = np.delete(ecg_ids_abs, ptb_xl_indices)
 
     if test_size == 0:
         return [], [], ecg_ids_abs, labels
